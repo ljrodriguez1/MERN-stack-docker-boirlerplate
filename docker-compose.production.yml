@@ -7,12 +7,6 @@ services:
         command: npm run start
         container_name: nodejs
         restart: unless-stopped
-        ports:
-            # Service will be accessible on the host at port 9090.
-            - "80:${PORT:-8080}"
-        environment:
-            # /run/docs/reference/container-contract
-            PORT: ${PORT:-8080}
         networks:
         - app-network
     webserver:
