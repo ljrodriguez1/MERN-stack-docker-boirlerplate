@@ -1,4 +1,4 @@
-version: '3'
+Xversion: '3'
 
 services:
   nodejs:
@@ -41,7 +41,7 @@ services:
       - web-root:/var/www/html
     depends_on:
       - webserver
-    command: certonly --webroot --webroot-path=/var/www/html --email sammy@iic2713.me --agree-tos --no-eff-email --force-renewal -d iic2713.me  -d www.iic2713.me
+    command: certonly --webroot --webroot-path=/var/www/html --email sammy@iic2713.me --agree-tos --no-eff-email --dry-run -d iic2713.me  -d www.iic2713.me
 
 volumes:
   certbot-etc:
