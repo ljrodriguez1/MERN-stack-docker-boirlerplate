@@ -10,6 +10,8 @@ services:
     restart: unless-stopped
     networks:
       - app-network
+    environment: 
+      DB: mongodb+srv://ljrodriguez1:gpxuj491@cluster0.zd1ql.mongodb.net/ArqDeSist?retryWrites=true&w=majority
 
   webserver:
     image: nginx:latest
