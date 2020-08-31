@@ -11,8 +11,8 @@ services:
     networks:
       - app-network
     environment: 
-      DB: db_secret
-      SALT_SECRET: salt_secret
+      DB: mongodb+srv://ljrodriguez1:gpxuj491@cluster0.zd1ql.mongodb.net/ArqDeSist?retryWrites=true&w=majority
+      SALT_SECRET: 12354152432152
 
   webserver:
     image: nginx:latest
