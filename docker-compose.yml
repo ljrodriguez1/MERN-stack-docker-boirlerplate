@@ -13,9 +13,11 @@ services:
     ports:
         # Service will be accessible on the host at port 8080.
         - "80:${PORT:-8080}"
+        - "3000:${PORT:-3000}"
     environment:
         # /run/docs/reference/container-contract
-        PORT: ${PORT:-8080}
+        PORT: ${PORT:-3000}
+        WSPORT: ${PORT:-3000}
         DB: mongodb://mongo:27017/db
         SALT_SECRET: 312iu4212hui
     depends_on: 

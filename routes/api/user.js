@@ -7,11 +7,22 @@ const jwt = require("jsonwebtoken");
 // Load input validation
 const validateRegisterInput = require("../../validation/register");
 const validateLoginInput = require("../../validation/login");
+
+const { storeTools, store } = require('../../websockets/store');
+const { generateUUID } = require('../../utils/generateUUID')
+const { newMessage: generateNewMessage } = require('../../utils/newMessage')
+
 // Load User model
 const User = require("../../models/User");
 
+const {
+  addConnectedUser,
+  updateReconnectedUserData,  
+  userAlredyExist,
+  createNewChat,
+} = storeTools;
 // @route POST api/users/register
-// @desc Register user
+// @desc Register userF
 // @access Public
 router.post("/register", (req, res) => {
     // Form validation
@@ -36,7 +47,9 @@ router.post("/register", (req, res) => {
             newUser.password = hash;
             newUser
               .save()
-              .then(user => res.json(user))
+              .then(user => {
+                res.json(user)
+              })
               .catch(err => console.log(err));
           });
         });
@@ -48,50 +61,56 @@ router.post("/register", (req, res) => {
 // @desc Login user and return JWT token
 // @access Public
 router.post("/login", (req, res) => {
+  console.log('post login')
     // Form validation
   const { errors, isValid } = validateLoginInput(req.body);
   // Check validation
-    if (!isValid) {
-      return res.status(400).json(errors);
-    }
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
   const email = req.body.email;
-    const password = req.body.password;
+  const password = req.body.password;
   // Find user by email
-    User.findOne({ email }).then(user => {
-      // Check if user exists
-      if (!user) {
-        return res.status(404).json({ emailnotfound: "Email not found" });
-      }
-  // Check password
-      bcrypt.compare(password, user.password).then(isMatch => {
-        if (isMatch) {
-          // User matched
-          // Create JWT Payload
-          const payload = {
-            id: user.id,
-            name: user.name
-          };
-  // Sign token
-          jwt.sign(
-            payload,
-            process.env.SALT_SECRET,
-            {
-              expiresIn: 31556926 // 1 year in seconds
-            },
-            (err, token) => {
+  User.findOne({ email }).then(user => {
+    // Check if user exists
+    if (!user) {
+      return res.status(404).json({ emailnotfound: "Email not found" });
+    }
+// Check password
+    bcrypt.compare(password, user.password).then(isMatch => {
+      if (isMatch) {
+        // User matched
+        // Create JWT Payload
+        const payload = {
+          id: user.id,
+          name: user.name,
+          uuid: user.id,
+        };
+        console.log(payload)
+        console.log('i am going to sign')
+        // Sign token
+        jwt.sign(
+          payload,
+          process.env.SALT_SECRET,
+          {
+            expiresIn: 31556926 // 1 year in seconds
+          },
+          (err, token) => {
+              console.log('here i am')
+              console.log('i did send an answer')
               res.json({
-                success: true,
-                token: "Bearer " + token
-              });
-            }
-          );
-        } else {
-          return res
-            .status(400)
-            .json({ passwordincorrect: "Password incorrect" });
-        }
-      });
+              success: true,
+              token: "Bearer " + token
+            });
+          }
+        );
+      } else {
+        return res
+          .status(400)
+          .json({ passwordincorrect: "Password incorrect" });
+      }
     });
+  });
 });
 
 exports.router = router;

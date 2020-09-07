@@ -13,6 +13,7 @@ services:
     environment: 
       DB: your_link:D
       SALT_SECRET: maybesalt:D
+      WSPORT: ${PORT:-3000}
 
   webserver:
     image: nginx:latest
